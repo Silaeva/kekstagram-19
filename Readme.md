@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Anna Silaeva](https://up.htmlacademy.ru/javascript/19/user/1078695).
-* Наставник: `Неизвестно`.
+* Наставник: [Алексей Балесный].
 
 ---
 
