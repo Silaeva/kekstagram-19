@@ -5,6 +5,8 @@ var MAX_LIKES = 200;
 var COMMENTATOR_NAMES = ['Майкл Скотт', 'Пэм Биззли', 'Джим Халперт', 'Энди Бернард', 'Дуайт Шрут', 'Филлис Вэнс'];
 var COMMENTS_NUMBER = 6;
 var COMMENTATOR_MESSAGES = ['Всё отлично! В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
+var MIN_AVATAR_NUMBER = 1;
+var MAX_AVATAR_NUMBER = 6;
 
 var picturesListElement = document.querySelector('.pictures');
 var pictureTemplateElement = document.querySelector('#picture')
@@ -16,14 +18,14 @@ var getRandomNumber = function (min, max) {
 };
 
 var getRandomElement = function (data) {
-  return data[Math.floor(Math.random() * data.length)];
+  return data[getRandomNumber(0, data.length - 1)];
 };
 
 var createComments = function (number) {
   var comments = [];
   for (var i = 0; i < number; i++) {
-    comments = {
-      avatar: 'img/avatar-' + getRandomNumber(1, 6) + '.svg', // магичeские числа, убирать в константы?
+    comments[i] = {
+      avatar: 'img/avatar-' + getRandomNumber(MIN_AVATAR_NUMBER, MAX_AVATAR_NUMBER) + '.svg',
       message: getRandomElement(COMMENTATOR_MESSAGES),
       name: getRandomElement(COMMENTATOR_NAMES)
     };
@@ -39,21 +41,19 @@ var createPhotoDescription = function (number) {
       url: 'photos/' + (i + 1) + '.jpg',
       description: 'здесь будет строка - описание фотографии',
       likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
-      comments: createComments(COMMENTS_NUMBER)
+      comments: createComments(getRandomNumber(0, COMMENTS_NUMBER))
     };
   }
   return userPhotoDescriotions;
 };
 
-createPhotoDescription(DESCRIPTIONS_NUMBER);
-
-var renderDescription = function (descriptions) {
+var fillPhotoTemplateWithData = function (data) {
   var descriptionElement = pictureTemplateElement.cloneNode(true);
 
-  descriptionElement.querySelector('.picture__img').src = descriptions.url;
-  descriptionElement.querySelector('.picture__img').alt = descriptions.description;
-  descriptionElement.querySelector('.picture__comments').textContent = 2;
-  descriptionElement.querySelector('.picture__likes').textContent = descriptions.likes;
+  descriptionElement.querySelector('.picture__img').src = data.url;
+  descriptionElement.querySelector('.picture__img').alt = data.description;
+  descriptionElement.querySelector('.picture__comments').textContent = getRandomNumber(1, COMMENTS_NUMBER);
+  descriptionElement.querySelector('.picture__likes').textContent = data.likes;
 
   return descriptionElement;
 };
@@ -62,7 +62,7 @@ var addElements = function (picturesData) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < picturesData.length; i++) {
-    fragment.appendChild(renderDescription(picturesData[i]));
+    fragment.appendChild(fillPhotoTemplateWithData(picturesData[i]));
   }
   picturesListElement.appendChild(fragment);
 };
