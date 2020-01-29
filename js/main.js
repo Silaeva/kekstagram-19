@@ -52,7 +52,7 @@ var fillPhotoTemplateWithData = function (data) {
 
   descriptionElement.querySelector('.picture__img').src = data.url;
   descriptionElement.querySelector('.picture__img').alt = data.description;
-  descriptionElement.querySelector('.picture__comments').textContent = getRandomNumber(1, COMMENTS_NUMBER);
+  descriptionElement.querySelector('.picture__comments').textContent = data.comments.length;
   descriptionElement.querySelector('.picture__likes').textContent = data.likes;
 
   return descriptionElement;
