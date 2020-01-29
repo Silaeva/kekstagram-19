@@ -12,20 +12,12 @@ var pictureTemplateElement = document.querySelector('#picture')
   .querySelector('.picture');
 
 var getRandomNumber = function (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min; // включительно
+  return Math.floor(Math.random() * (max - min + 1)) + min; /
 };
 
 var getRandomElement = function (data) {
   return data[Math.floor(Math.random() * data.length)];
 };
-/*
-var getUrlPhoto = function (number) {
-  var urlAddress;
-  for (var i = 1; i <= number; i++) {
-    urlAddress = 'photos/' + i + '.jpg';
-  }
-  return urlAddress;
-};*/
 
 var createComments = function (number) {
   var comments = [];
