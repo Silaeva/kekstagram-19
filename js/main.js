@@ -7,6 +7,7 @@ var COMMENTS_NUMBER = 6;
 var COMMENTATOR_MESSAGES = ['Всё отлично! В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 var MIN_AVATAR_NUMBER = 1;
 var MAX_AVATAR_NUMBER = 6;
+var MIN_COMMENT_NUMBER = 1;
 
 var picturesListElement = document.querySelector('.pictures');
 var pictureTemplateElement = document.querySelector('#picture')
@@ -33,6 +34,7 @@ var createComments = function (number) {
   return comments;
 };
 
+
 var createPhotoDescription = function (number) {
   var userPhotoDescriotions = [];
 
@@ -41,7 +43,7 @@ var createPhotoDescription = function (number) {
       url: 'photos/' + (i + 1) + '.jpg',
       description: 'здесь будет строка - описание фотографии',
       likes: getRandomNumber(MIN_LIKES, MAX_LIKES),
-      comments: createComments(getRandomNumber(0, COMMENTS_NUMBER))
+      comments: createComments(getRandomNumber(MIN_COMMENT_NUMBER, COMMENTS_NUMBER))
     };
   }
   return userPhotoDescriotions;
@@ -68,3 +70,42 @@ var addElements = function (picturesData) {
 };
 
 addElements((createPhotoDescription(DESCRIPTIONS_NUMBER)));
+
+var bigPictureElement = document.querySelector('.big-picture');
+bigPictureElement.classList.remove('hidden');
+
+var fillBigPictureWithData = function (pictureData) {
+  bigPictureElement.querySelector('.big-picture__img img').src = pictureData[0].url;
+  bigPictureElement.querySelector('.likes-count').textContent = pictureData[0].likes;
+  bigPictureElement.querySelector('.comments-count').textContent = pictureData[0].comments.length;
+  bigPictureElement.querySelector('.social__caption').textContent = pictureData[0].description;
+};
+
+fillBigPictureWithData(createPhotoDescription(DESCRIPTIONS_NUMBER));
+
+var commentsListElement = document.querySelector('.social__comments');
+var commentTemplateElement = document.querySelector('.social__comment');
+
+var createNewCommentElements = function (commentData) {
+  var commentElement = commentTemplateElement.cloneNode(true);
+
+  commentElement.querySelector('.social__picture').src = commentData.avatar;
+  commentElement.querySelector('.social__picture').alt = commentData.name;
+  commentElement.querySelector('.social__text').textContent = commentData.message;
+
+  return commentElement;
+};
+
+commentsListElement.innerHTML = '';
+
+var addCommentElements = function (commentData) {
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < getRandomNumber(MIN_COMMENT_NUMBER, commentData.length); i++) {
+    fragment.appendChild(createNewCommentElements(commentData[i]));
+  }
+  commentsListElement.appendChild(fragment);
+};
+
+addCommentElements((createComments(COMMENTS_NUMBER)));
+
