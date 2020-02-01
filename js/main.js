@@ -86,9 +86,8 @@ var createNewCommentElement = function (commentData) {
   return commentElement;
 };
 
-commentsListElement.innerHTML = '';
-
 var addCommentElements = function (commentData) {
+  commentsListElement.innerHTML = '';
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < commentData.length; i++) {
