@@ -8,6 +8,8 @@ var COMMENTATOR_MESSAGES = ['Всё отлично! В целом всё неп�
 var MIN_AVATAR_NUMBER = 1;
 var MAX_AVATAR_NUMBER = 6;
 var MIN_COMMENT_NUMBER = 1;
+var ESC_KEY = 'Escape';
+var ENTER_KEY = 'Enter';
 
 var picturesListElement = document.querySelector('.pictures');
 var pictureTemplateElement = document.querySelector('#picture')
@@ -98,7 +100,7 @@ var addCommentElements = function (commentData) {
 
 var fillBigPictureWithData = function (pictureData) {
   var bigPictureElement = document.querySelector('.big-picture');
-  bigPictureElement.classList.remove('hidden');
+  // bigPictureElement.classList.remove('hidden');
 
   bigPictureElement.querySelector('.big-picture__img img').src = pictureData.url;
   bigPictureElement.querySelector('.likes-count').textContent = pictureData.likes;
@@ -114,4 +116,134 @@ document.querySelector('.social__comment-count').classList.add('hidden');
 document.querySelector('.comments-loader').classList.add('hidden');
 
 
-document.querySelector('body').classList.add('modal-open');
+// document.querySelector('body').classList.add('modal-open');
+
+// Загрузка изображения и показ формы редактирования
+
+var editStartElement = document.querySelector('.img-upload__input');
+var editFormElement = document.querySelector('.img-upload__overlay');
+var editFormCloseElement = editFormElement.querySelector('.img-upload__cancel');
+
+var editFormEscPressHandler = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeEditForm();
+  }
+};
+
+var openEditForm = function () {
+  editFormElement.classList.remove('hidden');
+  document.addEventListener('keydown', editFormEscPressHandler);
+  document.querySelector('body').classList.add('modal-open');
+  editFormElement.addEventListener('change', editedPhotoChangeHandler);
+  effectToggleElement.addEventListener('mouseup', toggleMouseUpHandler);
+  effectBar.classList.add('hidden');
+};
+
+var closeEditForm = function () {
+  editFormElement.classList.add('hidden');
+  document.removeEventListener('keydown', editFormEscPressHandler);
+  editStartElement.value = '';
+  document.querySelector('body').classList.remove('modal-open');
+  editFormElement.removeEventListener('change', editedPhotoChangeHandler);
+  effectToggleElement.removeEventListener('mouseup', toggleMouseUpHandler);
+};
+
+editStartElement.addEventListener('change', function (evt) {
+  evt.preventDefault();
+  openEditForm();
+});
+
+editStartElement.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    openEditForm();
+  }
+});
+
+editFormCloseElement.addEventListener('click', function () {
+  closeEditForm();
+});
+
+editFormCloseElement.addEventListener('keydown', function (evt) {
+  if (evt.key === ENTER_KEY) {
+    closeEditForm();
+  }
+});
+
+// Редактирование изображения и ограничения, накладываемые на поля
+
+var editedPhoto = document.querySelector('.img-upload__preview img');
+// var editFormElement = document.querySelector('.img-upload__overlay'); // ФОРМА где слушать клики/ уже объявлена выше
+var effectBar = document.querySelector('.img-upload__effect-level');
+var effectToggleElement = document.querySelector('.effect-level__pin');
+var effectDepthElement = document.querySelector('.effect-level__depth');
+
+var editedPhotoChangeHandler = function (evt) {
+  if (evt.target && evt.target.matches('input[type="radio"]')) {
+    editedPhoto.className = '';
+    if (evt.target.matches('input[value="none"]')) {
+      effectBar.classList.add('hidden');
+    } else {
+      effectBar.classList.remove('hidden');
+      editedPhoto.classList.add('effects__preview--' + evt.target.value);
+      effectToggleElement.style.left = 100 + '%';
+      effectDepthElement.style.width = 100 + '%';
+    }
+  }
+};
+
+var toggleMouseUpHandler = function () {
+  effectToggleElement.style.left = POSITION_OF_TOGGLE + '%';
+  effectDepthElement.style.width = POSITION_OF_TOGGLE + '%';
+  if (('input[value="chrome"]').checked) {
+    editedPhoto.style.filter = chromFilter;
+  } else if (('input[value="sepia"]').checked) {
+    editedPhoto.style.filter = sepiaFilter;
+  } else if (('input[value="marvin"]').checked) {
+    editedPhoto.style.filter = marvinFilter;
+  } else if (('input[value="phobos"]').checked) {
+    editedPhoto.style.filter = phobosFilter;
+  } else if (('input[value="heat"]').checked) {
+    editedPhoto.style.filter = heatFilter;
+  }
+};
+
+var POSITION_OF_TOGGLE = 20;
+
+var getChromFilter = function (value) {
+  var maxValue = 1;
+  var chromLevel = value * maxValue / 100;
+  return 'grayscale(' + chromLevel + ')';
+};
+
+var chromFilter = getChromFilter(POSITION_OF_TOGGLE);
+
+var getSepiaFilter = function (value) {
+  var maxValue = 1;
+  var sepiaLevel = value * maxValue / 100;
+  return 'sepia(' + sepiaLevel + ')';
+};
+
+var sepiaFilter = getSepiaFilter(POSITION_OF_TOGGLE);
+
+var getMarvinFilter = function (value) {
+  return 'invert(' + value + '%)';
+};
+
+var marvinFilter = getMarvinFilter(POSITION_OF_TOGGLE);
+
+var getPhobosFilter = function (value) {
+  var maxValue = 3;
+  var phobosLevel = value * maxValue / 100;
+  return 'blur(' + phobosLevel + 'px)';
+};
+
+var phobosFilter = getPhobosFilter(POSITION_OF_TOGGLE);
+
+var getHeatFilter = function (value) {
+  var minValue = 1;
+  var maxValue = 3;
+  var heatLevel = minValue + (value * (maxValue - minValue) / 100);
+  return 'brightness(' + heatLevel + ')';
+};
+
+var heatFilter = getHeatFilter(POSITION_OF_TOGGLE);
