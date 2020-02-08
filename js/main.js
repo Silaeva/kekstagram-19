@@ -177,14 +177,18 @@ var effectBar = document.querySelector('.img-upload__effect-level');
 var effectToggleElement = document.querySelector('.effect-level__pin');
 var effectDepthElement = document.querySelector('.effect-level__depth');
 
+var currentFilter;
+
 var editedPhotoChangeHandler = function (evt) {
+  currentFilter = evt.target.value;
   if (evt.target && evt.target.matches('input[type="radio"]')) {
+    editedPhoto.style.filter = '';
     editedPhoto.className = '';
     if (evt.target.matches('input[value="none"]')) {
       effectBar.classList.add('hidden');
     } else {
       effectBar.classList.remove('hidden');
-      editedPhoto.classList.add('effects__preview--' + evt.target.value);
+      editedPhoto.classList.add('effects__preview--' + currentFilter);
       effectToggleElement.style.left = 100 + '%';
       effectDepthElement.style.width = 100 + '%';
     }
@@ -194,17 +198,18 @@ var editedPhotoChangeHandler = function (evt) {
 var toggleMouseUpHandler = function () {
   effectToggleElement.style.left = POSITION_OF_TOGGLE + '%';
   effectDepthElement.style.width = POSITION_OF_TOGGLE + '%';
-  if (('input[value="chrome"]').checked) {
+  if (currentFilter === 'chrome') {
     editedPhoto.style.filter = chromFilter;
-  } else if (('input[value="sepia"]').checked) {
+  } else if (currentFilter === 'sepia') {
     editedPhoto.style.filter = sepiaFilter;
-  } else if (('input[value="marvin"]').checked) {
+  } else if (currentFilter === 'marvin') {
     editedPhoto.style.filter = marvinFilter;
-  } else if (('input[value="phobos"]').checked) {
+  } else if (currentFilter === 'phobos') {
     editedPhoto.style.filter = phobosFilter;
-  } else if (('input[value="heat"]').checked) {
+  } else if (currentFilter === 'heat') {
     editedPhoto.style.filter = heatFilter;
   }
+  return currentFilter;
 };
 
 var POSITION_OF_TOGGLE = 20;
