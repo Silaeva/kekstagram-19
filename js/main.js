@@ -137,15 +137,20 @@ var openEditForm = function () {
   editFormElement.addEventListener('change', editedPhotoChangeHandler);
   effectToggleElement.addEventListener('mouseup', toggleMouseUpHandler);
   effectBar.classList.add('hidden');
+  scaleSmallerElement.addEventListener('click', scaleSmallerClickHandler);
+  scaleBiggerElement.addEventListener('click', scaleBiggerClickHandler);
 };
 
 var closeEditForm = function () {
   editFormElement.classList.add('hidden');
   document.removeEventListener('keydown', editFormEscPressHandler);
   editStartElement.value = '';
+  editedPhoto.style.filter = '';
   document.querySelector('body').classList.remove('modal-open');
   editFormElement.removeEventListener('change', editedPhotoChangeHandler);
   effectToggleElement.removeEventListener('mouseup', toggleMouseUpHandler);
+  scaleSmallerElement.removeEventListener('click', scaleSmallerClickHandler);
+  scaleBiggerElement.addEventListener('click', scaleBiggerClickHandler);
 };
 
 editStartElement.addEventListener('change', function (evt) {
@@ -171,19 +176,20 @@ editFormCloseElement.addEventListener('keydown', function (evt) {
 
 // Редактирование изображения и ограничения, накладываемые на поля
 
-var editedPhoto = document.querySelector('.img-upload__preview img');
+var editedPhoto = editFormElement.querySelector('.img-upload__preview img');
 // var editFormElement = document.querySelector('.img-upload__overlay'); // ФОРМА где слушать клики/ уже объявлена выше
-var effectBar = document.querySelector('.img-upload__effect-level');
-var effectToggleElement = document.querySelector('.effect-level__pin');
-var effectDepthElement = document.querySelector('.effect-level__depth');
+var effectBar = editFormElement.querySelector('.img-upload__effect-level');
+var effectToggleElement = editFormElement.querySelector('.effect-level__pin');
+var effectDepthElement = editFormElement.querySelector('.effect-level__depth');
+var effectLevelValue = editFormElement.querySelector('effect-level__value');
 
 var currentFilter;
 
 var editedPhotoChangeHandler = function (evt) {
-  currentFilter = evt.target.value;
-  if (evt.target && evt.target.matches('input[type="radio"]')) {
+  if (evt.target.matches('input[type="radio"]')) {
     editedPhoto.style.filter = '';
-    editedPhoto.className = '';
+    editedPhoto.classList.remove('effects__preview--' + currentFilter);
+    currentFilter = evt.target.value;
     if (evt.target.matches('input[value="none"]')) {
       effectBar.classList.add('hidden');
     } else {
@@ -191,6 +197,7 @@ var editedPhotoChangeHandler = function (evt) {
       editedPhoto.classList.add('effects__preview--' + currentFilter);
       effectToggleElement.style.left = 100 + '%';
       effectDepthElement.style.width = 100 + '%';
+      effectLevelValue.value = 100 + '%';
     }
   }
 };
@@ -199,56 +206,78 @@ var toggleMouseUpHandler = function () {
   effectToggleElement.style.left = POSITION_OF_TOGGLE + '%';
   effectDepthElement.style.width = POSITION_OF_TOGGLE + '%';
   if (currentFilter === 'chrome') {
-    editedPhoto.style.filter = chromFilter;
+    editedPhoto.style.filter = getChromFilter(POSITION_OF_TOGGLE);
   } else if (currentFilter === 'sepia') {
-    editedPhoto.style.filter = sepiaFilter;
+    editedPhoto.style.filter = getSepiaFilter(POSITION_OF_TOGGLE);
   } else if (currentFilter === 'marvin') {
-    editedPhoto.style.filter = marvinFilter;
+    editedPhoto.style.filter = getMarvinFilter(POSITION_OF_TOGGLE);
   } else if (currentFilter === 'phobos') {
-    editedPhoto.style.filter = phobosFilter;
+    editedPhoto.style.filter = getPhobosFilter(POSITION_OF_TOGGLE);
   } else if (currentFilter === 'heat') {
-    editedPhoto.style.filter = heatFilter;
+    editedPhoto.style.filter = getHeatFilter(POSITION_OF_TOGGLE);
   }
-  return currentFilter;
+  effectLevelValue.value = POSITION_OF_TOGGLE;
 };
 
 var POSITION_OF_TOGGLE = 20;
 
 var getChromFilter = function (value) {
-  var maxValue = 1;
-  var chromLevel = value * maxValue / 100;
+  var MAX_VALUE = 1;
+  var chromLevel = value * MAX_VALUE / 100;
   return 'grayscale(' + chromLevel + ')';
 };
 
-var chromFilter = getChromFilter(POSITION_OF_TOGGLE);
-
 var getSepiaFilter = function (value) {
-  var maxValue = 1;
-  var sepiaLevel = value * maxValue / 100;
+  var MAX_VALUE = 1;
+  var sepiaLevel = value * MAX_VALUE / 100;
   return 'sepia(' + sepiaLevel + ')';
 };
-
-var sepiaFilter = getSepiaFilter(POSITION_OF_TOGGLE);
 
 var getMarvinFilter = function (value) {
   return 'invert(' + value + '%)';
 };
 
-var marvinFilter = getMarvinFilter(POSITION_OF_TOGGLE);
-
 var getPhobosFilter = function (value) {
-  var maxValue = 3;
-  var phobosLevel = value * maxValue / 100;
+  var MAX_VALUE = 3;
+  var phobosLevel = value * MAX_VALUE / 100;
   return 'blur(' + phobosLevel + 'px)';
 };
 
-var phobosFilter = getPhobosFilter(POSITION_OF_TOGGLE);
-
 var getHeatFilter = function (value) {
-  var minValue = 1;
-  var maxValue = 3;
-  var heatLevel = minValue + (value * (maxValue - minValue) / 100);
+  var MIN_VALUE = 1;
+  var MAX_VALUE = 3;
+  var heatLevel = MIN_VALUE + (value * (MAX_VALUE - MIN_VALUE) / 100);
   return 'brightness(' + heatLevel + ')';
 };
 
-var heatFilter = getHeatFilter(POSITION_OF_TOGGLE);
+// масштабирование
+
+var scaleSmallerElement = editFormElement.querySelector('.scale__control--smaller');
+var scaleBiggerElement = editFormElement.querySelector('.scale__control--bigger');
+var scaleValueElement = editFormElement.querySelector('.scale__control--value');
+
+var SCALE_STEP = 25;
+var SCALE_VALUE_MIN = 25;
+var SCALE_VALUE_MAX = 100;
+
+var getScaleValue = function () {
+  return parseInt(scaleValueElement.value, 10);
+};
+
+var getScaleValueInRange = function (value) {
+  return Math.min(SCALE_VALUE_MAX, Math.max(SCALE_VALUE_MIN, value));
+};
+
+var scaleSmallerClickHandler = function () {
+  var currentScaleValue = getScaleValue();
+  var newScaleValue = getScaleValueInRange(currentScaleValue - SCALE_STEP);
+  scaleValueElement.value = newScaleValue + '%';
+  editedPhoto.style.transform = 'scale(' + (newScaleValue / 100) + ')';
+};
+
+var scaleBiggerClickHandler = function () {
+  var currentScaleValue = getScaleValue();
+  var newScaleValue = getScaleValueInRange(currentScaleValue + SCALE_STEP);
+  scaleValueElement.value = newScaleValue + '%';
+  editedPhoto.style.transform = 'scale(' + (newScaleValue / 100) + ')';
+};
