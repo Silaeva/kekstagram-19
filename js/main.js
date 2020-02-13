@@ -124,8 +124,13 @@ var editStartElement = document.querySelector('.img-upload__input');
 var editFormElement = document.querySelector('.img-upload__overlay');
 var editFormCloseElement = editFormElement.querySelector('.img-upload__cancel');
 
+// var hashtagInputElement = editFormElement.querySelector('.text__hashtags');
+// var commentInputElement = editFormElement.querySelector('.text__description');
+
+
 var editFormEscPressHandler = function (evt) {
-  if (evt.key === ESC_KEY) {
+  var active = document.activeElement;
+  if (hashtagInputElement !== active && commentInputElement !== active && evt.key === ESC_KEY) {
     closeEditForm();
   }
 };
@@ -139,6 +144,8 @@ var openEditForm = function () {
   effectBarElement.classList.add('hidden');
   scaleSmallerElement.addEventListener('click', scaleSmallerClickHandler);
   scaleBiggerElement.addEventListener('click', scaleBiggerClickHandler);
+  hashtagInputElement.addEventListener('input', hashtagInputHandler);
+  commentInputElement.addEventListener('invalid', commentInvalidHandler);
 };
 
 var closeEditForm = function () {
@@ -146,11 +153,14 @@ var closeEditForm = function () {
   document.removeEventListener('keydown', editFormEscPressHandler);
   editStartElement.value = '';
   editedPhotoElement.style.filter = '';
+  editedPhotoElement.style.transform = '';
   document.querySelector('body').classList.remove('modal-open');
   editFormElement.removeEventListener('change', editedPhotoElementChangeHandler);
   effectToggleElement.removeEventListener('mouseup', toggleMouseUpHandler);
   scaleSmallerElement.removeEventListener('click', scaleSmallerClickHandler);
   scaleBiggerElement.removeEventListener('click', scaleBiggerClickHandler);
+  hashtagInputElement.removeEventListener('input', hashtagInputHandler);
+  commentInputElement.removeEventListener('invalid', commentInvalidHandler);
 };
 
 editStartElement.addEventListener('change', function (evt) {
@@ -176,8 +186,14 @@ editFormCloseElement.addEventListener('keydown', function (evt) {
 
 // Фильтры
 
+var POSITION_OF_TOGGLE = 20;
+var MAX_VALUE_CHROME = 1;
+var MAX_VALUE_SEPIA = 1;
+var MAX_VALUE_PHOBOS = 3;
+var MIN_VALUE_HEAT = 1;
+var MAX_VALUE_HEAT = 3;
+
 var editedPhotoElement = editFormElement.querySelector('.img-upload__preview img');
-// var editFormElement = document.querySelector('.img-upload__overlay'); // ФОРМА где слушать клики/ уже объявлена выше
 var effectBarElement = editFormElement.querySelector('.img-upload__effect-level');
 var effectToggleElement = editFormElement.querySelector('.effect-level__pin');
 var effectDepthElement = editFormElement.querySelector('.effect-level__depth');
@@ -201,13 +217,6 @@ var editedPhotoElementChangeHandler = function (evt) {
     }
   }
 };
-
-var POSITION_OF_TOGGLE = 20;
-var MAX_VALUE_CHROME = 1;
-var MAX_VALUE_SEPIA = 1;
-var MAX_VALUE_PHOBOS = 3;
-var MIN_VALUE_HEAT = 1;
-var MAX_VALUE_HEAT = 3;
 
 var getChromeFilter = function (value) {
   var chromeLevel = value * MAX_VALUE_CHROME / 100;
@@ -250,13 +259,14 @@ var toggleMouseUpHandler = function () {
 
 // масштабирование
 
+var SCALE_STEP = 25;
+var SCALE_VALUE_MIN = 25;
+var SCALE_VALUE_MAX = 100;
+
 var scaleSmallerElement = editFormElement.querySelector('.scale__control--smaller');
 var scaleBiggerElement = editFormElement.querySelector('.scale__control--bigger');
 var scaleValueElement = editFormElement.querySelector('.scale__control--value');
 
-var SCALE_STEP = 25;
-var SCALE_VALUE_MIN = 25;
-var SCALE_VALUE_MAX = 100;
 
 var getScaleValue = function () {
   return parseInt(scaleValueElement.value, 10);
@@ -282,22 +292,21 @@ var scaleBiggerClickHandler = function () {
 
 // валидация
 
+var MIN_HASHTAG_LENGTH = 2;
+var MAX_HASHTAG_LENGTH = 20;
+var MAX_HASHTAG_NUMBER = 5;
+var MAX_COMMENT_LENGTH = 140;
+
 var hashtagInputElement = editFormElement.querySelector('.text__hashtags');
 var commentInputElement = editFormElement.querySelector('.text__description');
 
 var commentInvalidHandler = function (evt) {
   if (commentInputElement.validity.tooLong) {
-    evt.target.setCustomValidity('Комментарий не должен превышать 140 знаков');
+    evt.target.setCustomValidity('Комментарий не должен превышать ' + MAX_COMMENT_LENGTH + ' знаков');
   } else {
     evt.target.setCustomValidity('');
   }
 };
-
-commentInputElement.addEventListener('invalid', commentInvalidHandler); // добавить remover
-
-var MIN_HASHTAG_LENGTH = 2;
-var MAX_HASHTAG_LENGTH = 20;
-var MAX_HASHTAG_NUMBER = 5;
 
 var isUniqueArray = function (array) {
   var unique = {};
@@ -312,32 +321,46 @@ var isUniqueArray = function (array) {
   return true;
 };
 
-
 var isStartsFromHash = function (word) {
-  return (word[0] === '#') ? true : false;
+  return word[0] === '#';
+};
+
+var isContainSymbols = function (word) {
+  return word.match(/^#[a-zA-Z0-9а-яА-Я]+$/);
 };
 
 var getInvalidityMessage = function (array) {
-  var message;
+  var message = '';
+
+  if (array.length > MAX_HASHTAG_NUMBER) {
+    message = 'Должно быть не более ' + MAX_HASHTAG_NUMBER + ' хэш-тегов';
+    return message;
+  } else if (!isUniqueArray(array)) {
+    message = 'Хэш-теги не должны повторяться (хэш-теги нечувствительны к регистру)';
+    return message;
+  }
   for (var i = 0; i < array.length; i++) {
-    if (array.length > MAX_HASHTAG_NUMBER) {
-      message = 'Должно быть не более ' + MAX_HASHTAG_NUMBER + ' хэш-тегов';
-    } else if (!isUniqueArray(array)) {
-      message = 'Хэш-теги не должны повторяться';
+    if (!isStartsFromHash(array[i])) {
+      message = 'Хэштег ' + array[i] + ' должен начинаться с #';
+      return message;
+    } else if (array[i].length === 1 && array[i] === '#') {
+      message = 'Хэштег не может состоять только из решётки';
+      return message;
     } else if (array[i].length < MIN_HASHTAG_LENGTH) {
       message = 'Хэштег ' + array[i] + ' должен состоять минимум из ' + MIN_HASHTAG_LENGTH + ' символов';
+      return message;
     } else if (array[i].length > MAX_HASHTAG_LENGTH) {
       message = 'Хэштег должен состоять максимум из ' + MAX_HASHTAG_LENGTH + ' символов';
-    } else if (!isStartsFromHash(array[i])) {
-      message = 'Хэштег ' + array[i] + ' должен начинаться с #';
+      return message;
+    } else if (!isContainSymbols(array[i])) {
+      message = 'Cтрока после решётки не должна содержать пробелы, спецсимволы(#, @, $ и т.п.), символы пунктуации(тире, дефис, запятая и т.п.), эмодзи и т.д.';
+      return message;
     }
   }
   return message;
 };
 
 var hashtagInputHandler = function (evt) {
-  var hashtags = hashtagInputElement.value.split(' ');
+  var hashtags = hashtagInputElement.value.toLowerCase().split(' ');
   evt.target.setCustomValidity(getInvalidityMessage(hashtags));
 };
-
-hashtagInputElement.addEventListener('input', hashtagInputHandler); // добавить remover
