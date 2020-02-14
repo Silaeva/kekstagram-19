@@ -124,10 +124,6 @@ var editStartElement = document.querySelector('.img-upload__input');
 var editFormElement = document.querySelector('.img-upload__overlay');
 var editFormCloseElement = editFormElement.querySelector('.img-upload__cancel');
 
-// var hashtagInputElement = editFormElement.querySelector('.text__hashtags');
-// var commentInputElement = editFormElement.querySelector('.text__description');
-
-
 var editFormEscPressHandler = function (evt) {
   var active = document.activeElement;
   if (hashtagInputElement !== active && commentInputElement !== active && evt.key === ESC_KEY) {
@@ -145,7 +141,6 @@ var openEditForm = function () {
   scaleSmallerElement.addEventListener('click', scaleSmallerClickHandler);
   scaleBiggerElement.addEventListener('click', scaleBiggerClickHandler);
   hashtagInputElement.addEventListener('input', hashtagInputHandler);
-  commentInputElement.addEventListener('invalid', commentInvalidHandler);
 };
 
 var closeEditForm = function () {
@@ -154,13 +149,14 @@ var closeEditForm = function () {
   editStartElement.value = '';
   editedPhotoElement.style.filter = '';
   editedPhotoElement.style.transform = '';
+  scaleValueElement.value = 100 + '%';
+  editedPhotoElement.classList.remove('effects__preview--' + currentFilter);
   document.querySelector('body').classList.remove('modal-open');
   editFormElement.removeEventListener('change', editedPhotoElementChangeHandler);
   effectToggleElement.removeEventListener('mouseup', toggleMouseUpHandler);
   scaleSmallerElement.removeEventListener('click', scaleSmallerClickHandler);
   scaleBiggerElement.removeEventListener('click', scaleBiggerClickHandler);
   hashtagInputElement.removeEventListener('input', hashtagInputHandler);
-  commentInputElement.removeEventListener('invalid', commentInvalidHandler);
 };
 
 editStartElement.addEventListener('change', function (evt) {
@@ -295,18 +291,9 @@ var scaleBiggerClickHandler = function () {
 var MIN_HASHTAG_LENGTH = 2;
 var MAX_HASHTAG_LENGTH = 20;
 var MAX_HASHTAG_NUMBER = 5;
-var MAX_COMMENT_LENGTH = 140;
 
 var hashtagInputElement = editFormElement.querySelector('.text__hashtags');
 var commentInputElement = editFormElement.querySelector('.text__description');
-
-var commentInvalidHandler = function (evt) {
-  if (commentInputElement.validity.tooLong) {
-    evt.target.setCustomValidity('Комментарий не должен превышать ' + MAX_COMMENT_LENGTH + ' знаков');
-  } else {
-    evt.target.setCustomValidity('');
-  }
-};
 
 var isUniqueArray = function (array) {
   var unique = {};
@@ -321,10 +308,6 @@ var isUniqueArray = function (array) {
   return true;
 };
 
-var isStartsFromHash = function (word) {
-  return word[0] === '#';
-};
-
 var isContainSymbols = function (word) {
   return word.match(/^#[a-zA-Z0-9а-яА-Я]+$/);
 };
@@ -335,25 +318,24 @@ var getInvalidityMessage = function (array) {
   if (array.length > MAX_HASHTAG_NUMBER) {
     message = 'Должно быть не более ' + MAX_HASHTAG_NUMBER + ' хэш-тегов';
     return message;
-  } else if (!isUniqueArray(array)) {
+  }
+  if (!isUniqueArray(array)) {
     message = 'Хэш-теги не должны повторяться (хэш-теги нечувствительны к регистру)';
     return message;
   }
+
   for (var i = 0; i < array.length; i++) {
-    if (!isStartsFromHash(array[i])) {
-      message = 'Хэштег ' + array[i] + ' должен начинаться с #';
-      return message;
-    } else if (array[i].length === 1 && array[i] === '#') {
-      message = 'Хэштег не может состоять только из решётки';
-      return message;
-    } else if (array[i].length < MIN_HASHTAG_LENGTH) {
-      message = 'Хэштег ' + array[i] + ' должен состоять минимум из ' + MIN_HASHTAG_LENGTH + ' символов';
-      return message;
-    } else if (array[i].length > MAX_HASHTAG_LENGTH) {
-      message = 'Хэштег должен состоять максимум из ' + MAX_HASHTAG_LENGTH + ' символов';
+    if (array[i].length === 1 && array[i] === '#') {
+      message = 'Хэш-тег не может состоять только из решётки';
       return message;
     } else if (!isContainSymbols(array[i])) {
-      message = 'Cтрока после решётки не должна содержать пробелы, спецсимволы(#, @, $ и т.п.), символы пунктуации(тире, дефис, запятая и т.п.), эмодзи и т.д.';
+      message = 'Хэш-тег ' + array[i] + ' должен начинаться с символа решетки и состоять только из букв и цифр';
+      return message;
+    } else if (array[i].length < MIN_HASHTAG_LENGTH) {
+      message = 'Хэш-тег ' + array[i] + ' должен состоять минимум из ' + MIN_HASHTAG_LENGTH + ' символов';
+      return message;
+    } else if (array[i].length > MAX_HASHTAG_LENGTH) {
+      message = 'Хэш-тег должен состоять максимум из ' + MAX_HASHTAG_LENGTH + ' символов';
       return message;
     }
   }
