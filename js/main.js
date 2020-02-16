@@ -4,7 +4,13 @@ var MIN_LIKES = 15;
 var MAX_LIKES = 200;
 var COMMENTATOR_NAMES = ['Майкл Скотт', 'Пэм Биззли', 'Джим Халперт', 'Энди Бернард', 'Дуайт Шрут', 'Филлис Вэнс'];
 var COMMENTS_NUMBER = 6;
-var COMMENTATOR_MESSAGES = ['Всё отлично! В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
+var COMMENTATOR_MESSAGES = [
+  'Всё отлично! В целом всё неплохо. Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
+];
 var MIN_AVATAR_NUMBER = 1;
 var MAX_AVATAR_NUMBER = 6;
 var MIN_COMMENT_NUMBER = 1;
@@ -100,7 +106,7 @@ var addCommentElements = function (commentData) {
 
 var fillBigPictureWithData = function (pictureData) {
   var bigPictureElement = document.querySelector('.big-picture');
-  // bigPictureElement.classList.remove('hidden');
+  bigPictureElement.classList.remove('hidden');
 
   bigPictureElement.querySelector('.big-picture__img img').src = pictureData.url;
   bigPictureElement.querySelector('.likes-count').textContent = pictureData.likes;
@@ -108,15 +114,48 @@ var fillBigPictureWithData = function (pictureData) {
   bigPictureElement.querySelector('.social__caption').textContent = pictureData.description;
 
   addCommentElements(pictureData.comments);
+  document.querySelector('body').classList.add('modal-open');
+
+  closeBigPictureElement.addEventListener('click', closeBigPictureClickHandler);
+  document.addEventListener('keydown', bigPictureEscHandler);
 };
 
-fillBigPictureWithData(photos[0]);
+var closeBigPicture = function () {
+  document.querySelector('.big-picture').classList.add('hidden');
+  document.querySelector('body').classList.remove('modal-open');
+  closeBigPictureElement.removeEventListener('click', closeBigPictureClickHandler);
+  document.removeEventListener('keydown', bigPictureEscHandler);
+};
 
 document.querySelector('.social__comment-count').classList.add('hidden');
 document.querySelector('.comments-loader').classList.add('hidden');
 
+var usersPictures = document.querySelectorAll('.picture'); // коллекция всех фотографий пользователей
+var closeBigPictureElement = document.querySelector('.big-picture__cancel'); // крестик закрытия // document????
 
-// document.querySelector('body').classList.add('modal-open');
+var closeBigPictureClickHandler = function () {
+  closeBigPicture();
+};
+
+var bigPictureEscHandler = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeBigPicture();
+  }
+};
+
+var addPictureClickHandler = function (userPic, photo) {
+  userPic.addEventListener('click', function () {
+    fillBigPictureWithData(photo);
+  });
+};
+
+var addClickHandlers = function (pictureArray, dataArray) {
+  for (var j = 0; j < pictureArray.length; j++) {
+    addPictureClickHandler(pictureArray[j], dataArray[j]);
+  }
+};
+
+addClickHandlers(usersPictures, photos);
 
 // Загрузка изображения и показ формы редактирования
 
