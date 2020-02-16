@@ -42,7 +42,6 @@ var createComments = function (number) {
   return comments;
 };
 
-
 var createPhotoDescriptions = function (number) {
   var userPhotoDescriotions = [];
 
@@ -130,8 +129,8 @@ var closeBigPicture = function () {
 document.querySelector('.social__comment-count').classList.add('hidden');
 document.querySelector('.comments-loader').classList.add('hidden');
 
-var usersPictures = document.querySelectorAll('.picture'); // коллекция всех фотографий пользователей
-var closeBigPictureElement = document.querySelector('.big-picture__cancel'); // крестик закрытия // document????
+var usersPictures = document.querySelectorAll('.picture');
+var closeBigPictureElement = document.querySelector('.big-picture__cancel');
 
 var closeBigPictureClickHandler = function () {
   closeBigPicture();
