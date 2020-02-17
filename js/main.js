@@ -113,11 +113,12 @@ var fillBigPictureWithData = function (pictureData) {
   newBigPictureElement.querySelector('.comments-count').textContent = pictureData.comments.length;
   newBigPictureElement.querySelector('.social__caption').textContent = pictureData.description;
 
-  var commentsListElement = document.querySelector('.social__comments');
+  var commentsListElement = newBigPictureElement.querySelector('.social__comments');
   addCommentElements(pictureData.comments, commentsListElement);
 
   bigPictureElement.replaceWith(newBigPictureElement);
   newBigPictureElement.classList.remove('hidden');
+  bigPictureElement = newBigPictureElement;
 
   document.querySelector('body').classList.add('modal-open');
   newBigPictureElement.querySelector('.social__comment-count').classList.add('hidden');
@@ -129,9 +130,7 @@ var fillBigPictureWithData = function (pictureData) {
 };
 
 var closeBigPicture = function () {
-  document.querySelector('.big-picture').classList.add('hidden'); // так было, надо исправить
-  // bigPictureElement.classList.add('hidden'); // Исправила на это. Но не работает.
-  // newBigPictureElement.classList.add('hidden'); // значит надо прятать новый элемент? но как если он объявлен внутри fillBig..
+  bigPictureElement.classList.add('hidden');
   document.querySelector('body').classList.remove('modal-open');
   document.removeEventListener('keydown', bigPictureEscHandler);
 };
