@@ -103,16 +103,24 @@ var addCommentElements = function (commentData) {
   commentsListElement.appendChild(fragment);
 };
 
+var usersPictures = document.querySelectorAll('.picture');
+var closeBigPictureElement = document.querySelector('.big-picture__cancel');
+
 var fillBigPictureWithData = function (pictureData) {
   var bigPictureElement = document.querySelector('.big-picture');
-  bigPictureElement.classList.remove('hidden');
+  var parent = bigPictureElement.parentNode;
+  var newBigPictureElement = bigPictureElement.cloneNode(true);
 
-  bigPictureElement.querySelector('.big-picture__img img').src = pictureData.url;
-  bigPictureElement.querySelector('.likes-count').textContent = pictureData.likes;
-  bigPictureElement.querySelector('.comments-count').textContent = pictureData.comments.length;
-  bigPictureElement.querySelector('.social__caption').textContent = pictureData.description;
+  newBigPictureElement.querySelector('.big-picture__img img').src = pictureData.url;
+  newBigPictureElement.querySelector('.likes-count').textContent = pictureData.likes;
+  newBigPictureElement.querySelector('.comments-count').textContent = pictureData.comments.length;
+  newBigPictureElement.querySelector('.social__caption').textContent = pictureData.description;
 
   addCommentElements(pictureData.comments);
+
+  parent.replaceChild(newBigPictureElement, bigPictureElement);
+
+  newBigPictureElement.classList.remove('hidden');
   document.querySelector('body').classList.add('modal-open');
 
   closeBigPictureElement.addEventListener('click', closeBigPictureClickHandler);
@@ -128,9 +136,6 @@ var closeBigPicture = function () {
 
 document.querySelector('.social__comment-count').classList.add('hidden');
 document.querySelector('.comments-loader').classList.add('hidden');
-
-var usersPictures = document.querySelectorAll('.picture');
-var closeBigPictureElement = document.querySelector('.big-picture__cancel');
 
 var closeBigPictureClickHandler = function () {
   closeBigPicture();
@@ -148,9 +153,9 @@ var addPictureClickHandler = function (userPic, photo) {
   });
 };
 
-var addClickHandlers = function (pictureArray, dataArray) {
-  for (var j = 0; j < pictureArray.length; j++) {
-    addPictureClickHandler(pictureArray[j], dataArray[j]);
+var addClickHandlers = function (pictures, data) {
+  for (var j = 0; j < pictures.length; j++) {
+    addPictureClickHandler(pictures[j], data[j]);
   }
 };
 
