@@ -80,7 +80,6 @@ var addElements = function (picturesData) {
 
 addElements(photos);
 
-var commentsListElement = document.querySelector('.social__comments');
 var commentTemplateElement = document.querySelector('.social__comment');
 
 var createNewCommentElement = function (commentData) {
@@ -93,21 +92,20 @@ var createNewCommentElement = function (commentData) {
   return commentElement;
 };
 
-var addCommentElements = function (commentData) {
-  commentsListElement.innerHTML = '';
+var addCommentElements = function (commentData, element) {
+  element.innerHTML = '';
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < commentData.length; i++) {
     fragment.appendChild(createNewCommentElement(commentData[i]));
   }
-  commentsListElement.appendChild(fragment);
+  element.appendChild(fragment);
 };
 
 var usersPictures = document.querySelectorAll('.picture');
+var bigPictureElement = document.querySelector('.big-picture');
 
 var fillBigPictureWithData = function (pictureData) {
-  var bigPictureElement = document.querySelector('.big-picture');
-  var parent = bigPictureElement.parentNode;
   var newBigPictureElement = bigPictureElement.cloneNode(true);
 
   newBigPictureElement.querySelector('.big-picture__img img').src = pictureData.url;
@@ -115,12 +113,15 @@ var fillBigPictureWithData = function (pictureData) {
   newBigPictureElement.querySelector('.comments-count').textContent = pictureData.comments.length;
   newBigPictureElement.querySelector('.social__caption').textContent = pictureData.description;
 
-  addCommentElements(pictureData.comments);
+  var commentsListElement = document.querySelector('.social__comments');
+  addCommentElements(pictureData.comments, commentsListElement);
 
-  parent.replaceChild(newBigPictureElement, bigPictureElement);
-
+  bigPictureElement.replaceWith(newBigPictureElement);
   newBigPictureElement.classList.remove('hidden');
+
   document.querySelector('body').classList.add('modal-open');
+  newBigPictureElement.querySelector('.social__comment-count').classList.add('hidden');
+  newBigPictureElement.querySelector('.comments-loader').classList.add('hidden');
 
   var closeBigPictureElement = newBigPictureElement.querySelector('.big-picture__cancel');
   closeBigPictureElement.addEventListener('click', closeBigPictureClickHandler);
@@ -128,13 +129,12 @@ var fillBigPictureWithData = function (pictureData) {
 };
 
 var closeBigPicture = function () {
-  document.querySelector('.big-picture').classList.add('hidden');
+  document.querySelector('.big-picture').classList.add('hidden'); // так было, надо исправить
+  // bigPictureElement.classList.add('hidden'); // Исправила на это. Но не работает.
+  // newBigPictureElement.classList.add('hidden'); // значит надо прятать новый элемент? но как если он объявлен внутри fillBig..
   document.querySelector('body').classList.remove('modal-open');
   document.removeEventListener('keydown', bigPictureEscHandler);
 };
-
-document.querySelector('.social__comment-count').classList.add('hidden');
-document.querySelector('.comments-loader').classList.add('hidden');
 
 var closeBigPictureClickHandler = function () {
   closeBigPicture();
