@@ -104,7 +104,6 @@ var addCommentElements = function (commentData) {
 };
 
 var usersPictures = document.querySelectorAll('.picture');
-var closeBigPictureElement = document.querySelector('.big-picture__cancel');
 
 var fillBigPictureWithData = function (pictureData) {
   var bigPictureElement = document.querySelector('.big-picture');
@@ -123,6 +122,7 @@ var fillBigPictureWithData = function (pictureData) {
   newBigPictureElement.classList.remove('hidden');
   document.querySelector('body').classList.add('modal-open');
 
+  var closeBigPictureElement = newBigPictureElement.querySelector('.big-picture__cancel');
   closeBigPictureElement.addEventListener('click', closeBigPictureClickHandler);
   document.addEventListener('keydown', bigPictureEscHandler);
 };
@@ -130,7 +130,6 @@ var fillBigPictureWithData = function (pictureData) {
 var closeBigPicture = function () {
   document.querySelector('.big-picture').classList.add('hidden');
   document.querySelector('body').classList.remove('modal-open');
-  closeBigPictureElement.removeEventListener('click', closeBigPictureClickHandler);
   document.removeEventListener('keydown', bigPictureEscHandler);
 };
 
