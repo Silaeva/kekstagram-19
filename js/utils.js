@@ -5,13 +5,13 @@
   var ENTER_KEY = 'Enter';
 
   var isEscEvent = function (evt, action) {
-    if (evt.keyCode === ESC_KEY) {
+    if (evt.key === ESC_KEY) {
       action();
     }
   };
 
   var isEnterEvent = function (evt, action) {
-    if (evt.keyCode === ENTER_KEY) {
+    if (evt.key === ENTER_KEY) {
       action();
     }
   };
