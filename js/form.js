@@ -39,7 +39,7 @@
     editedPhotoElement.style.filter = '';
     editedPhotoElement.style.transform = '';
     scaleValueElement.value = 100 + '%';
-    editedPhotoElement.classList.remove('effects__preview--' + window.editing.currentFilter);
+    editedPhotoElement.classList.remove('effects__preview--' + window.editing.currentFilter());
     document.querySelector('body').classList.remove('modal-open');
     editFormElement.removeEventListener('change', window.editing.editedPhotoElementChangeHandler);
     effectToggleElement.removeEventListener('mouseup', window.editing.toggleMouseUpHandler);

@@ -103,11 +103,15 @@
     editedPhotoElement.style.transform = 'scale(' + (newScaleValue / 100) + ')';
   };
 
+  var getCurrentFilter = function () {
+    return currentFilter;
+  };
+
   window.editing = {
     scaleSmallerClickHandler: scaleSmallerClickHandler,
     scaleBiggerClickHandler: scaleBiggerClickHandler,
     editedPhotoElementChangeHandler: editedPhotoElementChangeHandler,
     toggleMouseUpHandler: toggleMouseUpHandler,
-    currentFilter: currentFilter
+    currentFilter: getCurrentFilter
   };
 })();
