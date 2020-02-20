@@ -25,8 +25,6 @@
   };
 
   window.utils = {
-    ESC_KEY: ESC_KEY,
-    ENTER_KEY: ENTER_KEY,
     isEscEvent: isEscEvent,
     isEnterEvent: isEnterEvent,
     getRandomNumber: getRandomNumber,
