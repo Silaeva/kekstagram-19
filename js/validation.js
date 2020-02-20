@@ -60,7 +60,16 @@
     evt.target.setCustomValidity(getInvalidityMessage(hashtags));
   };
 
+  var addHandlers = function () {
+    hashtagInputElement.addEventListener('input', hashtagInputHandler);
+  };
+
+  var removeHandlers = function () {
+    hashtagInputElement.removeEventListener('input', hashtagInputHandler);
+  };
+
   window.validation = {
-    hashtagInputHandler: hashtagInputHandler
+    addHandlers: addHandlers,
+    removeHandlers: removeHandlers
   };
 })();
