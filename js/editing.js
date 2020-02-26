@@ -33,7 +33,7 @@
         editedPhotoElement.classList.add('effects__preview--' + currentFilter);
         effectToggleElement.style.left = 100 + '%';
         effectDepthElement.style.width = 100 + '%';
-        effectLevelValue.value = 100 + '%';
+        effectLevelValue.value = 100;
       }
     }
   };
