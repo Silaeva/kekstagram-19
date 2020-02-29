@@ -24,7 +24,7 @@
     picturesListElement.appendChild(fragment);
   };
 
-  addElements(window.data.photos);
+  // addElements(window.data.photos); // добавляются моки
 
   var commentTemplateElement = document.querySelector('.social__comment');
 
@@ -39,6 +39,7 @@
   };
 
   window.gallery = {
-    createNewCommentElement: createNewCommentElement
+    createNewCommentElement: createNewCommentElement,
+    addElements: addElements
   };
 })();

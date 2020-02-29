@@ -2,7 +2,6 @@
 
 (function () {
   var COMMENTS_NUMBER = 5;
-  var usersPictures = document.querySelectorAll('.picture');
   var bigPictureElement = document.querySelector('.big-picture');
 
 
@@ -54,7 +53,7 @@
     window.utils.isEscEvent(evt, closeBigPicture);
   };
 
-  var addPictureClickHandler = function (userPic, photo) { // заполнение информацией по клику
+  var addPictureClickHandler = function (userPic, photo) {
     userPic.addEventListener('click', function () {
       fillBigPictureWithData(photo);
     });
@@ -67,6 +66,8 @@
   };
 
   var successHandler = function (photos) {
+    window.gallery.addElements(photos);
+    var usersPictures = document.querySelectorAll('.picture');
     addClickHandlers(usersPictures, photos);
   };
 
