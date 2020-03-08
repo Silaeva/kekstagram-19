@@ -70,6 +70,7 @@
 
   window.validation = {
     addHandlers: addHandlers,
-    removeHandlers: removeHandlers
+    removeHandlers: removeHandlers,
+    isUniqueArray: isUniqueArray
   };
 })();
