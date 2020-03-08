@@ -4,18 +4,17 @@
   var COMMENTS_NUMBER = 5;
   var bigPictureElement = document.querySelector('.big-picture');
 
-
-  var addCommentElements = function (commentData, element) { // создание комментов
+  var addCommentElements = function (commentData, element) {
     element.innerHTML = '';
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < COMMENTS_NUMBER; i++) {
+    for (var i = 0; i < commentData.length && i < COMMENTS_NUMBER; i++) {
       fragment.appendChild(window.gallery.createNewCommentElement(commentData[i]));
     }
     element.appendChild(fragment);
   };
 
-  var fillBigPictureWithData = function (pictureData) { // заполнение данными
+  var fillBigPictureWithData = function (pictureData) {
     var newBigPictureElement = bigPictureElement.cloneNode(true);
 
     newBigPictureElement.querySelector('.big-picture__img img').src = pictureData.url;
@@ -24,15 +23,15 @@
     newBigPictureElement.querySelector('.social__caption').textContent = pictureData.description;
 
     var commentsListElement = newBigPictureElement.querySelector('.social__comments');
-    addCommentElements(pictureData.comments, commentsListElement); // добавляются комменты
+    addCommentElements(pictureData.comments, commentsListElement);
 
     bigPictureElement.replaceWith(newBigPictureElement);
     newBigPictureElement.classList.remove('hidden');
     bigPictureElement = newBigPictureElement;
 
     document.querySelector('body').classList.add('modal-open');
-    newBigPictureElement.querySelector('.social__comment-count').classList.add('hidden'); // количество комментов
-    newBigPictureElement.querySelector('.comments-loader').classList.add('hidden'); // кнопка загрузки комментариев
+    newBigPictureElement.querySelector('.social__comment-count').classList.add('hidden');
+    newBigPictureElement.querySelector('.comments-loader').classList.add('hidden');
 
     var closeBigPictureElement = newBigPictureElement.querySelector('.big-picture__cancel');
     closeBigPictureElement.addEventListener('click', closeBigPictureClickHandler);
@@ -65,27 +64,7 @@
     }
   };
 
-  var successHandler = function (photos) {
-    window.gallery.addElements(photos);
-    var usersPictures = document.querySelectorAll('.picture');
-    addClickHandlers(usersPictures, photos);
+  window.preview = {
+    addClickHandlers: addClickHandlers
   };
-
-  var errorHandler = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; color: rgb(82%, 20%, 20%, 0.9); background-color: rgba(0, 0, 0, 0.9);';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.top = 0;
-    node.style.bottom = 0;
-
-    node.style.fontSize = '30px';
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-  };
-
-  window.backend.load(successHandler, errorHandler);
-
 })();

@@ -143,4 +143,10 @@
   };
 
   formElement.addEventListener('submit', formSubmitHandler);
+
+  window.form = {
+    createResultMessage: createResultMessage,
+    errorMessageEscHandler: errorMessageEscHandler,
+    closeErrorMessage: closeErrorMessage
+  };
 })();
