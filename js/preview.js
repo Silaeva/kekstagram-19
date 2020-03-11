@@ -6,7 +6,7 @@
 
   var showedComments = 0;
 
-  var addCommentElements = function (commentData, container) {
+  var addFirstComments = function (commentData, container) {
     container.innerHTML = '';
     showedComments = Math.min(commentData.length, START_COMMENTS_NUMBER);
     var fragment = document.createDocumentFragment();
@@ -24,10 +24,9 @@
     newBigPictureElement.querySelector('.big-picture__img img').src = pictureData.url;
     newBigPictureElement.querySelector('.likes-count').textContent = pictureData.likes;
     newBigPictureElement.querySelector('.social__caption').textContent = pictureData.description;
-    // newBigPictureElement.querySelector('.comments-count').textContent = pictureData.comments.length;
 
     var commentsListElement = newBigPictureElement.querySelector('.social__comments');
-    addCommentElements(pictureData.comments, commentsListElement);
+    addFirstComments(pictureData.comments, commentsListElement);
 
     bigPictureElement.replaceWith(newBigPictureElement);
     newBigPictureElement.classList.remove('hidden');
@@ -40,13 +39,16 @@
     if (pictureData.comments.length < START_COMMENTS_NUMBER) {
       loadCommentsBtnElement.classList.add('hidden');
     }
-    loadCommentsBtnElement.addEventListener('click', commentLoadClickHandler(pictureData.comments, commentsListElement, loadCommentsBtnElement));
+    loadCommentsBtnElement.addEventListener('click', function () {
+      loadOtherComments(pictureData.comments, commentsListElement, loadCommentsBtnElement);
+      newBigPictureElement.querySelector('.social__comment-count').textContent = showedComments + ' из ' + pictureData.comments.length + ' комментариев';
+    });
     var closeBigPictureElement = newBigPictureElement.querySelector('.big-picture__cancel');
     closeBigPictureElement.addEventListener('click', closeBigPictureClickHandler);
     document.addEventListener('keydown', bigPictureEscHandler);
   };
 
-  var commentLoadClickHandler = function (allComments, container, button) {
+  var loadOtherComments = function (allComments, container, button) {
     container.innerHTML = '';
     var fragment = document.createDocumentFragment();
     if ((allComments.length - showedComments) > START_COMMENTS_NUMBER) {
