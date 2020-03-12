@@ -70,8 +70,6 @@
     'heat': getHeatFilter,
   };
 
-  // масштабирование
-
   var scaleValueElement = editFormElement.querySelector('.scale__control--value');
 
   var getScaleValue = function () {

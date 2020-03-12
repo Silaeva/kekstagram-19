@@ -4,6 +4,7 @@
   var MIN_HASHTAG_LENGTH = 2;
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHTAG_NUMBER = 5;
+  var ERROR_INPUT_STYLE = '2px solid #fe4d4c';
 
   var editFormElement = document.querySelector('.img-upload__overlay');
   var hashtagInputElement = editFormElement.querySelector('.text__hashtags');
@@ -27,28 +28,35 @@
 
   var getInvalidityMessage = function (array) {
     var message = '';
+    hashtagInputElement.style.border = 'none';
 
     if (array.length > MAX_HASHTAG_NUMBER) {
       message = 'Должно быть не более ' + MAX_HASHTAG_NUMBER + ' хэш-тегов';
+      hashtagInputElement.style.border = ERROR_INPUT_STYLE;
       return message;
     }
     if (!isUniqueArray(array)) {
       message = 'Хэш-теги не должны повторяться (хэш-теги нечувствительны к регистру)';
+      hashtagInputElement.style.border = ERROR_INPUT_STYLE;
       return message;
     }
 
     for (var i = 0; i < array.length; i++) {
       if (array[i].length === 1 && array[i] === '#') {
         message = 'Хэш-тег не может состоять только из решётки';
+        hashtagInputElement.style.border = ERROR_INPUT_STYLE;
         return message;
       } else if (!isContainSymbols(array[i])) {
         message = 'Хэш-тег ' + array[i] + ' должен начинаться с символа решетки и состоять только из букв и цифр';
+        hashtagInputElement.style.border = ERROR_INPUT_STYLE;
         return message;
       } else if (array[i].length < MIN_HASHTAG_LENGTH) {
         message = 'Хэш-тег ' + array[i] + ' должен состоять минимум из ' + MIN_HASHTAG_LENGTH + ' символов';
+        hashtagInputElement.style.border = ERROR_INPUT_STYLE;
         return message;
       } else if (array[i].length > MAX_HASHTAG_LENGTH) {
         message = 'Хэш-тег должен состоять максимум из ' + MAX_HASHTAG_LENGTH + ' символов';
+        hashtagInputElement.style.border = ERROR_INPUT_STYLE;
         return message;
       }
     }
