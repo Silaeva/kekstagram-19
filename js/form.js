@@ -2,7 +2,7 @@
 
 (function () {
   var formElement = document.querySelector('.img-upload__form');
-  var editStartElement = document.querySelector('.img-upload__input');
+  var fileChooserElement = document.querySelector('.img-upload__input');
   var editFormElement = document.querySelector('.img-upload__overlay');
   var editFormCloseElement = editFormElement.querySelector('.img-upload__cancel');
   var effectBarElement = editFormElement.querySelector('.img-upload__effect-level');
@@ -15,7 +15,7 @@
   var editFormEscPressHandler = function (evt) {
     var active = document.activeElement;
     if (hashtagInputElement !== active && commentInputElement !== active) {
-      window.utils.isEnterEvent(evt, closeEditForm);
+      window.utils.isEnterEvent(evt, closeEditForm());
     }
   };
 
@@ -31,7 +31,7 @@
   var closeEditForm = function () {
     editFormElement.classList.add('hidden');
     document.removeEventListener('keydown', editFormEscPressHandler);
-    editStartElement.value = '';
+    fileChooserElement.value = '';
     editedPhotoElement.style.filter = '';
     editedPhotoElement.style.transform = '';
     scaleValueElement.value = 100 + '%';
@@ -42,14 +42,15 @@
     window.editing.removeHandlers();
     window.validation.removeHandlers();
     formElement.removeEventListener('submit', formSubmitHandler);
+    fileChooserElement.removeEventListener('change', window.uploadPhoto.fileChangeHandler);
   };
 
-  editStartElement.addEventListener('change', function (evt) {
+  fileChooserElement.addEventListener('change', function (evt) {
     evt.preventDefault();
     openEditForm();
   });
 
-  editStartElement.addEventListener('keydown', function (evt) {
+  fileChooserElement.addEventListener('keydown', function (evt) {
     window.utils.isEnterEvent(evt, openEditForm);
   });
 
@@ -60,8 +61,6 @@
   editFormCloseElement.addEventListener('keydown', function (evt) {
     window.utils.isEnterEvent(evt, closeEditForm);
   });
-
-  //  6.3
 
   var successTemplateElement = document.querySelector('#success').content.querySelector('.success');
   var errorTemplateElement = document.querySelector('#error').content.querySelector('.error');

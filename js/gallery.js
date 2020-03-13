@@ -43,8 +43,6 @@
     return commentElement;
   };
 
-  // 7.2
-
   var photos = [];
   var randomPhotos = [];
   var discussedPhotos = [];
