@@ -24,10 +24,9 @@
 
   var addElements = function (picturesData) {
     var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < picturesData.length; i++) {
-      fragment.appendChild(fillPhotoTemplateWithData(picturesData[i]));
-    }
+    picturesData.forEach(function (picture) {
+      fragment.appendChild(fillPhotoTemplateWithData(picture));
+    });
     picturesContainerElement.appendChild(fragment);
   };
 
@@ -46,52 +45,51 @@
   var photos = [];
   var randomPhotos = [];
   var discussedPhotos = [];
+  var activeFilterButton = filterDefaultElement;
 
-  var clearPhotosList = function () {
+  var clearPhotosList = function (button) {
     picturesContainerElement.querySelectorAll('.picture').forEach(function (item) {
       picturesContainerElement.removeChild(item);
     });
-    filterDefaultElement.classList.remove('img-filters__button--active');
-    filterRandomElement.classList.remove('img-filters__button--active');
-    filterDiscussedElement.classList.remove('img-filters__button--active');
+    button.classList.remove('img-filters__button--active');
   };
 
+  var renderPictures = function (filterButton, pictures) {
+    clearPhotosList(activeFilterButton);
+    filterButton.classList.add('img-filters__button--active');
+    addElements(pictures);
+    var usersPictures = document.querySelectorAll('.picture');
+    window.preview.addClickHandlers(usersPictures, pictures);
+    activeFilterButton = filterButton;
+  };
 
-  var filterPhotos = function () {
+  var addFilterClickHandlers = function () {
     addElements(photos);
     var usersPictures = document.querySelectorAll('.picture');
     window.preview.addClickHandlers(usersPictures, photos);
 
     filterDefaultElement.addEventListener('click', function () {
       window.debounce.set(function () {
-        clearPhotosList();
-        filterDefaultElement.classList.add('img-filters__button--active');
-        addElements(photos);
-        usersPictures = document.querySelectorAll('.picture');
-        window.preview.addClickHandlers(usersPictures, photos);
+        renderPictures(filterDefaultElement, photos);
       });
     });
 
     filterRandomElement.addEventListener('click', function () {
       window.debounce.set(function () {
-        clearPhotosList();
-        filterRandomElement.classList.add('img-filters__button--active');
-        while (randomPhotos.length < RANDOM_PHOTOS_NUMBER) {
-          var randomPhoto = window.utils.getRandomElement(photos);
-          if (randomPhotos.indexOf(randomPhoto) === -1) {
-            randomPhotos.push(randomPhoto);
-          }
+
+        var arrayCopy = photos.slice();
+
+        for (var i = 0; i < RANDOM_PHOTOS_NUMBER; i++) {
+          var randomIndex = Math.floor(Math.random() * arrayCopy.length);
+          var currentElement = arrayCopy.splice(randomIndex, 1);
+          randomPhotos.push(currentElement[0]);
         }
-        addElements(randomPhotos);
-        usersPictures = document.querySelectorAll('.picture');
-        window.preview.addClickHandlers(usersPictures, randomPhotos);
+        renderPictures(filterRandomElement, randomPhotos);
       });
     });
 
     filterDiscussedElement.addEventListener('click', function () {
       window.debounce.set(function () {
-        clearPhotosList();
-        filterDiscussedElement.classList.add('img-filters__button--active');
         discussedPhotos = photos.slice().sort(function (left, right) {
           var rankDiff = right.comments.length - left.comments.length;
           if (rankDiff === 0) {
@@ -99,9 +97,7 @@
           }
           return rankDiff;
         });
-        addElements(discussedPhotos);
-        usersPictures = document.querySelectorAll('.picture');
-        window.preview.addClickHandlers(usersPictures, discussedPhotos);
+        renderPictures(filterDiscussedElement, discussedPhotos);
       });
     });
   };
@@ -109,7 +105,7 @@
 
   var successHandler = function (data) {
     photos = data;
-    filterPhotos();
+    addFilterClickHandlers();
     filtersElement.classList.remove('img-filters--inactive');
   };
 

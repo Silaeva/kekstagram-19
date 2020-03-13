@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var INVALID_HASHTAG_LENGTH = 1;
   var MIN_HASHTAG_LENGTH = 2;
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHTAG_NUMBER = 5;
@@ -26,37 +27,41 @@
     return word.match(/^#[a-zA-Z0-9а-яА-Я]+$/);
   };
 
+  var setErrorStyle = function () {
+    hashtagInputElement.style.border = ERROR_INPUT_STYLE;
+  };
+
   var getInvalidityMessage = function (array) {
     var message = '';
     hashtagInputElement.style.border = 'none';
 
     if (array.length > MAX_HASHTAG_NUMBER) {
       message = 'Должно быть не более ' + MAX_HASHTAG_NUMBER + ' хэш-тегов';
-      hashtagInputElement.style.border = ERROR_INPUT_STYLE;
+      setErrorStyle();
       return message;
     }
     if (!isUniqueArray(array)) {
       message = 'Хэш-теги не должны повторяться (хэш-теги нечувствительны к регистру)';
-      hashtagInputElement.style.border = ERROR_INPUT_STYLE;
+      setErrorStyle();
       return message;
     }
 
     for (var i = 0; i < array.length; i++) {
-      if (array[i].length === 1 && array[i] === '#') {
+      if (array[i].length === INVALID_HASHTAG_LENGTH && array[i] === '#') {
         message = 'Хэш-тег не может состоять только из решётки';
-        hashtagInputElement.style.border = ERROR_INPUT_STYLE;
+        setErrorStyle();
         return message;
       } else if (!isContainSymbols(array[i])) {
         message = 'Хэш-тег ' + array[i] + ' должен начинаться с символа решетки и состоять только из букв и цифр';
-        hashtagInputElement.style.border = ERROR_INPUT_STYLE;
+        setErrorStyle();
         return message;
       } else if (array[i].length < MIN_HASHTAG_LENGTH) {
         message = 'Хэш-тег ' + array[i] + ' должен состоять минимум из ' + MIN_HASHTAG_LENGTH + ' символов';
-        hashtagInputElement.style.border = ERROR_INPUT_STYLE;
+        setErrorStyle();
         return message;
       } else if (array[i].length > MAX_HASHTAG_LENGTH) {
         message = 'Хэш-тег должен состоять максимум из ' + MAX_HASHTAG_LENGTH + ' символов';
-        hashtagInputElement.style.border = ERROR_INPUT_STYLE;
+        setErrorStyle();
         return message;
       }
     }

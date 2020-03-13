@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var DEFAULT_VALUE = 100;
   var formElement = document.querySelector('.img-upload__form');
   var fileChooserElement = document.querySelector('.img-upload__input');
   var editFormElement = document.querySelector('.img-upload__overlay');
@@ -15,7 +16,7 @@
   var editFormEscPressHandler = function (evt) {
     var active = document.activeElement;
     if (hashtagInputElement !== active && commentInputElement !== active) {
-      window.utils.isEnterEvent(evt, closeEditForm());
+      window.utils.isEscEvent(evt, closeEditForm);
     }
   };
 
@@ -34,7 +35,7 @@
     fileChooserElement.value = '';
     editedPhotoElement.style.filter = '';
     editedPhotoElement.style.transform = '';
-    scaleValueElement.value = 100 + '%';
+    scaleValueElement.value = DEFAULT_VALUE + '%';
     hashtagInputElement.value = '';
     commentInputElement.value = '';
     inputOriginalElement.checked = true;
@@ -76,13 +77,11 @@
     main.appendChild(messageElement);
   };
 
-  var successLayerElement = document.querySelector('.success');
-
   var successHandler = function () {
     closeEditForm();
     createResultMessage(successTemplateElement);
 
-    successLayerElement = document.querySelector('.success');
+    var successLayerElement = document.querySelector('.success');
     var messageButtonElement = successLayerElement.querySelector('.success__button');
     var successInnerElement = successLayerElement.querySelector('.success__inner');
     document.addEventListener('keydown', successMessageEscHandler);
@@ -94,10 +93,10 @@
         closeSuccessMessage();
       }
     });
-    return successLayerElement;
   };
 
   var closeSuccessMessage = function () {
+    var successLayerElement = document.querySelector('.success');
     main.removeChild(successLayerElement);
     document.removeEventListener('keydown', successMessageEscHandler);
   };
@@ -106,13 +105,11 @@
     window.utils.isEscEvent(evt, closeSuccessMessage);
   };
 
-  var errorLayerElement = document.querySelector('.error');
-
   var errorHandler = function (message) {
     closeEditForm();
     createResultMessage(errorTemplateElement, message);
 
-    errorLayerElement = document.querySelector('.error');
+    var errorLayerElement = document.querySelector('.error');
     var messageButtonElement = errorLayerElement.querySelector('.error__button');
     var errorInnerElement = errorLayerElement.querySelector('.error__inner');
     document.addEventListener('keydown', errorMessageEscHandler);
@@ -124,10 +121,10 @@
         closeErrorMessage();
       }
     });
-    return errorLayerElement;
   };
 
   var closeErrorMessage = function () {
+    var errorLayerElement = document.querySelector('.error');
     main.removeChild(errorLayerElement);
     document.removeEventListener('keydown', errorMessageEscHandler);
   };

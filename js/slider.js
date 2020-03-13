@@ -10,8 +10,7 @@
 
   effectToggleElement.addEventListener('mousedown', function (evt) {
     var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
+      x: evt.clientX
     };
 
     var toggleMouseMoveHandler = function (moveEvt) {

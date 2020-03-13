@@ -6,7 +6,8 @@
   var MAX_VALUE_PHOBOS = 3;
   var MIN_VALUE_HEAT = 1;
   var MAX_VALUE_HEAT = 3;
-  var SCALE_STEP = 25;
+  var SCALE_STEP_BIGGER = 25;
+  var SCALE_STEP_SMALLER = -25;
   var SCALE_VALUE_MIN = 25;
   var SCALE_VALUE_MAX = 100;
 
@@ -72,7 +73,7 @@
 
   var scaleValueElement = editFormElement.querySelector('.scale__control--value');
 
-  var getScaleValue = function () {
+  var getCurrentScaleValue = function () {
     return parseInt(scaleValueElement.value, 10);
   };
 
@@ -80,18 +81,19 @@
     return Math.min(SCALE_VALUE_MAX, Math.max(SCALE_VALUE_MIN, value));
   };
 
-  var scaleSmallerClickHandler = function () {
-    var currentScaleValue = getScaleValue();
-    var newScaleValue = getScaleValueInRange(currentScaleValue - SCALE_STEP);
+  var getNewScaleValue = function (step) {
+    var currentScaleValue = getCurrentScaleValue();
+    var newScaleValue = getScaleValueInRange(currentScaleValue + step);
     scaleValueElement.value = newScaleValue + '%';
     editedPhotoElement.style.transform = 'scale(' + (newScaleValue / 100) + ')';
   };
 
+  var scaleSmallerClickHandler = function () {
+    getNewScaleValue(SCALE_STEP_SMALLER);
+  };
+
   var scaleBiggerClickHandler = function () {
-    var currentScaleValue = getScaleValue();
-    var newScaleValue = getScaleValueInRange(currentScaleValue + SCALE_STEP);
-    scaleValueElement.value = newScaleValue + '%';
-    editedPhotoElement.style.transform = 'scale(' + (newScaleValue / 100) + ')';
+    getNewScaleValue(SCALE_STEP_BIGGER);
   };
 
   var addHandlers = function () {
