@@ -6,6 +6,7 @@
   var MAX_HASHTAG_LENGTH = 20;
   var MAX_HASHTAG_NUMBER = 5;
   var ERROR_INPUT_STYLE = '2px solid #fe4d4c';
+  var REGEX = /^#[a-zA-Z0-9а-яА-Я]+$/;
 
   var editFormElement = document.querySelector('.img-upload__overlay');
   var hashtagInputElement = editFormElement.querySelector('.text__hashtags');
@@ -24,7 +25,7 @@
   };
 
   var isContainSymbols = function (word) {
-    return word.match(/^#[a-zA-Z0-9а-яА-Я]+$/);
+    return word.match(REGEX);
   };
 
   var setErrorStyle = function () {

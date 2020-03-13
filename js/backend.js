@@ -3,6 +3,8 @@
 (function () {
   var URL_GET = 'https://js.dump.academy/kekstagram/data';
   var URL_POST = 'https://js.dump.academy/kekstagram';
+  var METHOD_GET = 'GET';
+  var METHOD_POST = 'POST';
   var StatusCode = {
     OK: 200
   };
@@ -32,14 +34,14 @@
   var load = function (onLoad, onError) {
     addXhrEventHandlers(onLoad, onError);
 
-    xhr.open('GET', URL_GET);
+    xhr.open(METHOD_GET, URL_GET);
     xhr.send();
   };
 
   var save = function (data, onLoad, onError) {
     addXhrEventHandlers(onLoad, onError);
 
-    xhr.open('POST', URL_POST);
+    xhr.open(METHOD_POST, URL_POST);
     xhr.send(data);
   };
 
