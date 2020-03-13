@@ -15,7 +15,7 @@
   var editFormEscPressHandler = function (evt) {
     var active = document.activeElement;
     if (hashtagInputElement !== active && commentInputElement !== active) {
-      window.utils.isEnterEvent(evt, closeEditForm);
+      window.utils.isEnterEvent(evt, closeEditForm());
     }
   };
 
