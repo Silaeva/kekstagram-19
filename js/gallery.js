@@ -76,7 +76,7 @@
 
     filterRandomElement.addEventListener('click', function () {
       window.debounce.set(function () {
-
+        randomPhotos = [];
         var arrayCopy = photos.slice();
 
         for (var i = 0; i < RANDOM_PHOTOS_NUMBER; i++) {
